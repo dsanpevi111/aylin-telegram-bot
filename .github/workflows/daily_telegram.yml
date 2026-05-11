@@ -1,0 +1,21 @@
+name: Mensaje Diario Aylin 🌸
+
+on:
+  schedule:
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Enviar mensaje a Telegram
+        run: python "bot de telegramas de Aylin/enviar_mensaje.py"
