@@ -1,7 +1,7 @@
 name: Mensaje Diario Aylin
 on:
   schedule:
-    - cron: '0 13 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch:
 jobs:
   send-message:

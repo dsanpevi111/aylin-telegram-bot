@@ -7,8 +7,8 @@ today = date.today()
 weekday = today.weekday()
 day_num = today.day
 
-DIAS_ES = ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
-MESES_ES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
+DIAS = ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
+MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
 
 DEADLINES = {
     "UHU Huelva": date(2026,5,18),
@@ -32,56 +32,53 @@ OPENS = {
     "ULL": date(2026,6,15),
 }
 
-MANIFESTACIONES = [
-    "Soy periodista brillante. Mi maestria es mi destino.",
-    "Atraigo excelencia. Mi futuro es luminoso.",
-    "Merezco las mejores universidades.",
-    "Mi potencial es infinito. Las puertas se abren.",
-    "Soy el cambio que el periodismo necesita.",
-    "Cada accion construye mi maestria.",
-    "Mi historia merece una universidad de elite.",
-    "Tengo poder de crear mi futuro.",
-    "Las mejores oportunidades vienen a mi.",
-    "Mi maestria es mi realidad proxima.",
-    "Brillo como la estrella que soy.",
-    "Soy candidata excepcional.",
-    "Mi vision periodistica es unica.",
-    "Atraigo becas y reconocimiento.",
-    "El universo conspira a mi favor.",
-    "Cada obstaculo es un escalon.",
-    "Soy inteligente, creativa y preparada.",
-    "Mi futuro es tan brillante.",
-    "Merezco lo mejor y lo atrae.",
-    "Estoy exactamente donde debo estar.",
-    "Mi maestria en Espana es inevitable.",
-    "Creo en mi poder.",
-    "Soy inversion segura.",
-    "Mi pasion es mi superpoder.",
-    "Atraigo oportunidades doradas.",
-    "Cada deadline me acerca a mi sueno.",
-    "Merezco educacion de clase mundial.",
-    "Las barreras se disuelven.",
-    "Mi maestria ya me espera.",
-    "Agradezco al universo.",
-    "Soy iman de oportunidades.",
-    "Mi potencial asusta.",
-    "Llevo excelencia en cada fibra.",
-    "Mi futuro es glorioso.",
-    "Atraigo mentores y becas.",
-    "Soy exactamente lo que buscan.",
-    "Mi periodismo cambiara el mundo.",
-    "Creo en mi mas que nadie.",
-    "Lo mejor sucede para mi.",
-    "Mi maestria es mi decision hecha.",
-    "Cada celula vibra con exito.",
-    "El universo me ama.",
-    "Soy digna y lista.",
+FRASES = [
+    "💕 Soy periodista brillante. Mi maestria es mi destino. ✨",
+    "🌸 Atraigo excelencia. Mi futuro es luminoso. 💫",
+    "💖 Merezco las mejores universidades. 👑",
+    "✨ Mi potencial es infinito. Las puertas se abren. 🌹",
+    "🦋 Soy el cambio que el periodismo necesita. 💪",
+    "🌺 Cada accion construye mi maestria. 🏗️",
+    "💝 Mi historia merece una universidad de elite. 📖",
+    "🌸 Tengo poder de crear mi futuro. ✨",
+    "💫 Las mejores oportunidades vienen a mi. 🌟",
+    "🎀 Mi maestria es mi realidad proxima. 🎯",
+    "💕 Brillo como la estrella que soy. ⭐",
+    "🌹 Soy candidata excepcional. 🎓",
+    "✨ Mi vision periodistica es unica. 🎬",
+    "🦋 Atraigo becas y reconocimiento. 🏆",
+    "💖 El universo conspira a mi favor. 🌍",
+    "🌸 Cada obstaculo es un escalon. 🚀",
+    "💫 Soy inteligente, creativa y preparada. 🧠",
+    "🎀 Mi futuro es tan brillante. ☀️",
+    "💕 Merezco lo mejor y lo atrae. 👑",
+    "🌺 Estoy exactamente donde debo estar. 🍀",
+    "✨ Mi maestria en Espana es inevitable. 🎊",
+    "💖 Creo en mi poder. 🔑",
+    "🌹 Soy inversion segura. 💎",
+    "🦋 Mi pasion es mi superpoder. ⚡",
+    "🌸 Atraigo oportunidades doradas. 🏅",
+    "💫 Cada deadline me acerca a mi sueno. 📅",
+    "🎀 Merezco educacion de clase mundial. 🌏",
+    "💕 Las barreras se disuelven. 🌈",
+    "🌺 Mi maestria ya me espera. 🎁",
+    "✨ Agradezco al universo. 🙏",
+    "💖 Soy iman de oportunidades. 🧲",
+    "🌹 Mi potencial asusta. 💥",
+    "🦋 Llevo excelencia en cada fibra. ⭐",
+    "🌸 Mi futuro es glorioso. 🛡️",
+    "💫 Atraigo mentores y becas. 🚪",
+    "🎀 Soy exactamente lo que buscan. 🎯",
+    "💕 Mi periodismo cambiara el mundo. 🌍",
+    "🌺 Creo en mi mas que nadie. 💯",
+    "✨ Lo mejor sucede para mi. ✅",
+    "💖 Mi maestria es mi decision hecha. ✍️",
 ]
 
 def days_until(d):
     return (d - today).days
 
-frase = MANIFESTACIONES[day_num % len(MANIFESTACIONES)]
+frase = FRASES[day_num % len(FRASES)]
 urgent = None
 min_d = 999
 for uni, d in DEADLINES.items():
@@ -92,9 +89,9 @@ for uni, d in DEADLINES.items():
 
 if urgent:
     if min_d <= 7:
-        frase += f"\n[URGENTE {urgent}: {min_d} DIAS]"
+        frase += f"\n🚨 {urgent}: {min_d} DIAS 🚨"
     elif min_d <= 20:
-        frase += f"\n[{urgent}: {min_d} dias]"
+        frase += f"\n⚡ {urgent}: {min_d} dias ⚡"
 
 lines = []
 for uni, d in DEADLINES.items():
@@ -107,18 +104,32 @@ for uni, d in OPENS.items():
     if 0 < n <= 40:
         lines.append(f"🟢 {uni}: +{n}d")
 
-accion = "\n".join(lines) if lines else "Revisa tus aplicaciones"
+accion = "\n".join(lines) if lines else "Revisa tus aplicaciones 💫"
 
-tesis = ["Lee 2 papers APA","Escribe 300 palabras","Revisa indice","Intro capitulo","5 referencias","Revisa ayer","Conclusiones"][day_num % 7]
+tesis = ["📖 Lee 2 papers APA","✍️ Escribe 300 palabras","🔍 Revisa indice","📝 Intro capitulo","📚 5 referencias","✅ Revisa ayer","💭 Conclusiones"][day_num % 7]
 
-clase = " | CLASE 7PM" if weekday == 1 else " | CLASE 9AM" if weekday == 5 else ""
-dia = f"{DIAS_ES[weekday]} {today.day} {MESES_ES[today.month-1]}"
+clase = " | ⏰ CLASE 7PM" if weekday == 1 else " | ⏰ CLASE 9AM" if weekday == 5 else ""
+dia = f"{DIAS[weekday]} {today.day} {MESES[today.month-1]}"
 
-msg = f"Aylin!\n{dia}\n{frase}\nTESIS: {tesis}\nMAESTRIAS:\n{accion}{clase}\nTu puedes!"
+msg = f"""🌸✨ BUENOS DIAS, AYLIN! ✨🌸
+{dia}
+
+{frase}
+
+📓 TESIS HOY:
+{tesis}
+
+🎓 MAESTRIAS:
+{accion}
+
+{clase}
+
+💕 Un paso a la vez. Tu puedes. 💕"""
 
 try:
-    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "7135132127"']
+    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "TUINFO"']
     subprocess.run(cmd, timeout=10, check=True)
-    print("OK iMessage")
-except:
-    print("FAIL")
+    print("✅ iMessage enviado!")
+except Exception as e:
+    print(f"❌ Error: {e}")
+    print("⚠️ Asegura que 'TUINFO' sea tu numero/email iCloud valido")
