@@ -12,5 +12,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - run: python "bot de telegramas de Aylin/ejecutar.py"
+         python "bot de telegramas de Aylin/enviar_mensaje.py"
