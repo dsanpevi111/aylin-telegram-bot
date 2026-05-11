@@ -1,179 +1,124 @@
 #!/usr/bin/env python3
-import urllib.request
-import urllib.parse
-import json
+import subprocess
 from datetime import date
+import sys
 
-BOT_TOKEN = "8743339704:AAHqexQ36eKx9SAXEkLLWGi_WJGK4mzrN38"
-CHAT_ID   = "7135132127"
+today = date.today()
+weekday = today.weekday()
+day_num = today.day
 
-today    = date.today()
-weekday  = today.weekday()
-day_num  = today.day
-
-DIAS_ES  = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"]
+DIAS_ES = ["Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo"]
 MESES_ES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
 
 DEADLINES = {
-    "UHU Huelva":     date(2026,5,18),
-    "UA Alicante":    date(2026,6,26),
+    "UHU Huelva": date(2026,5,18),
+    "UA Alicante": date(2026,6,26),
     "UVa Valladolid": date(2026,7,10),
-}
-OPENS = {
-    "UGR Granada":      date(2026,6,17),
-    "USC Santiago":     date(2026,6,23),
-    "MUCAII Salamanca": date(2026,6,1),
-}
-PORTALES = {
-    "UHU Huelva":      ("dua.us.es","apostilla del título + formulario DUA"),
-    "UA Alicante":     ("UACloud","equivalencia nota media + contactar acces.master@ua.es"),
-    "UVa Valladolid":  ("admisionmaster.uva.es","portfolio audiovisual + carta de motivación"),
-    "UGR Granada":     ("DUA Andalucía","carta de motivación con líneas de investigación"),
-    "USC Santiago":    ("matricula.usc.es","solicitud (puedes pedir 2 másteres a la vez)"),
-    "MUCAII Salamanca":("usal.es","2 cartas de recomendación + preinscripción"),
+    "UAB Barcelona": date(2026,7,15),
+    "UB Barcelona": date(2026,7,20),
+    "UPV Valencia": date(2026,6,30),
+    "UdL Lleida": date(2026,7,5),
+    "URV Tarragona": date(2026,7,12),
 }
 
-def days_until(d): 
+OPENS = {
+    "UGR Granada": date(2026,6,17),
+    "USC Santiago": date(2026,6,23),
+    "MUCAII": date(2026,6,1),
+    "UNED": date(2026,5,15),
+    "UC3M": date(2026,5,20),
+    "UAM": date(2026,6,5),
+    "UCM": date(2026,6,10),
+    "ULL": date(2026,6,15),
+}
+
+MANIFESTACIONES = [
+    "Soy periodista brillante. Mi maestria es mi destino.",
+    "Atraigo excelencia. Mi futuro es luminoso.",
+    "Merezco las mejores universidades.",
+    "Mi potencial es infinito. Las puertas se abren.",
+    "Soy el cambio que el periodismo necesita.",
+    "Cada accion construye mi maestria.",
+    "Mi historia merece una universidad de elite.",
+    "Tengo poder de crear mi futuro.",
+    "Las mejores oportunidades vienen a mi.",
+    "Mi maestria es mi realidad proxima.",
+    "Brillo como la estrella que soy.",
+    "Soy candidata excepcional.",
+    "Mi vision periodistica es unica.",
+    "Atraigo becas y reconocimiento.",
+    "El universo conspira a mi favor.",
+    "Cada obstaculo es un escalon.",
+    "Soy inteligente, creativa y preparada.",
+    "Mi futuro es tan brillante.",
+    "Merezco lo mejor y lo atrae.",
+    "Estoy exactamente donde debo estar.",
+    "Mi maestria en Espana es inevitable.",
+    "Creo en mi poder.",
+    "Soy inversion segura.",
+    "Mi pasion es mi superpoder.",
+    "Atraigo oportunidades doradas.",
+    "Cada deadline me acerca a mi sueno.",
+    "Merezco educacion de clase mundial.",
+    "Las barreras se disuelven.",
+    "Mi maestria ya me espera.",
+    "Agradezco al universo.",
+    "Soy iman de oportunidades.",
+    "Mi potencial asusta.",
+    "Llevo excelencia en cada fibra.",
+    "Mi futuro es glorioso.",
+    "Atraigo mentores y becas.",
+    "Soy exactamente lo que buscan.",
+    "Mi periodismo cambiara el mundo.",
+    "Creo en mi mas que nadie.",
+    "Lo mejor sucede para mi.",
+    "Mi maestria es mi decision hecha.",
+    "Cada celula vibra con exito.",
+    "El universo me ama.",
+    "Soy digna y lista.",
+]
+
+def days_until(d):
     return (d - today).days
 
-def get_frase_principal():
-    urgent_deadline = None
-    urgent_uni = None
-    min_days = float('inf')
-    
-    for uni, deadline in DEADLINES.items():
-        days = days_until(deadline)
-        if days > 0 and days < min_days:
-            min_days = days
-            urgent_deadline = deadline
-            urgent_uni = uni
-    
-    if urgent_uni:
-        if min_days <= 7:
-            frases = [
-                f"🚨 {urgent_uni} CIERRA EN {min_days} DÍAS. ¡ACCIÓN AHORA!",
-                f"⚡ Mi maestría en {urgent_uni} no espera. Hoy envío mis documentos.",
-                f"🔴 {min_days} días para {urgent_uni}. No procrastino más. 💪",
-                f"⏰ {urgent_uni}: {min_days} días. Cada minuto cuenta hoy. ⚡",
-                f"🎯 {min_days} días para mi futuro en {urgent_uni}. Actúo YA. 🔥",
-            ]
-            return frases[day_num % len(frases)]
-        elif min_days <= 20:
-            frases = [
-                f"💫 {urgent_uni} en {min_days} días. Estoy lista, preparada y motivada. ✨",
-                f"🌟 Mi maestría en {urgent_uni} está cada vez más cerca. Avanzo firme.",
-                f"🎓 {min_days} días para {urgent_uni}. Cada paso me acerca a mi sueño. 🌸",
-                f"💖 Voy a lograrlo en {urgent_uni}. Mi esfuerzo vale la pena. 🦋",
-                f"✨ {min_days} días. Mi historia me lleva a {urgent_uni}. Sigo adelante.",
-            ]
-            return frases[day_num % len(frases)]
-        elif min_days <= 40:
-            frases = [
-                f"📋 {min_days} días para {urgent_uni}. Preparo todo con calma y seguridad.",
-                f"🌱 Mi preparación para {urgent_uni} florece cada día. Voy bien. 🌸",
-                f"✍️ {min_days} días. Documento a documento, me acerco a {urgent_uni}.",
-                f"🏗️ Construyo mi candidatura para {urgent_uni}. Un paso a la vez. 💪",
-                f"📚 {min_days} días. Tengo tiempo para brillar en {urgent_uni}. 🌟",
-            ]
-            return frases[day_num % len(frases)]
-    
-    closest_open_uni = None
-    min_open_days = float('inf')
-    for uni, open_date in OPENS.items():
-        days = days_until(open_date)
-        if 0 < days <= 40 and days < min_open_days:
-            min_open_days = days
-            closest_open_uni = uni
-    
-    if closest_open_uni:
-        frases = [
-            f"🟢 ¡{closest_open_uni} abre en {min_open_days} días! Me preparo emocionada. 🎉",
-            f"🚀 {min_open_days} días para que {closest_open_uni} se abra. ¡Lo espero! ✨",
-            f"💝 Próximamente: {closest_open_uni} en {min_open_days} días. Estoy lista. 🌟",
-            f"🎊 {closest_open_uni} casi aquí. Estos {min_open_days} días son para brillar. 💫",
-            f"🌈 {min_open_days} días para {closest_open_uni}. Mi corazón está listo. 💖",
-        ]
-        return frases[day_num % len(frases)]
-    
-    frases_default = [
-        "Soy una periodista peruana brillante. Mi maestría en España ya me está esperando. 🔮",
-        "Cada acción de hoy me acerca un kilómetro más a mi ciudad europea. ✨",
-        "Mi historia es mi equipaje perfecto. 💫",
-        "No necesito verlo todo. Solo el siguiente paso. Y hoy lo doy. 🦋",
-        "Soy capaz. Estoy lista. Me lo merezco. 🌸",
-    ]
-    return frases_default[day_num % len(frases_default)]
+frase = MANIFESTACIONES[day_num % len(MANIFESTACIONES)]
+urgent = None
+min_d = 999
+for uni, d in DEADLINES.items():
+    days = days_until(d)
+    if 0 < days < min_d:
+        min_d = days
+        urgent = uni
 
-def get_accion():
-    lines=[]
-    for uni,d in DEADLINES.items():
-        n=days_until(d)
-        portal,doc=PORTALES[uni]
-        if 0<n<=7: 
-            lines.append(f"🚨 URGENTE {uni} en {n} días: {doc}")
-        elif 8<=n<=20: 
-            lines.append(f"⚡ {uni} en {n} días: revisa {doc}")
-        elif 21<=n<=40: 
-            lines.append(f"📋 {uni} en {n} días: prepara {doc}")
-    
-    for uni,d in OPENS.items():
-        n=days_until(d)
-        _,doc=PORTALES[uni]
-        if 0<n<=40: 
-            lines.append(f"🟢 {uni} abre en {n} días: {doc}")
-    
-    return "\n".join(lines) if lines else "Revisa tus aplicaciones."
+if urgent:
+    if min_d <= 7:
+        frase += f"\n[URGENTE {urgent}: {min_d} DIAS]"
+    elif min_d <= 20:
+        frase += f"\n[{urgent}: {min_d} dias]"
 
-def get_estado():
-    rows=[]
-    for uni,d in DEADLINES.items():
-        n=days_until(d)
-        emoji="⛔" if n<=0 else "🔴" if n<=7 else "🟠" if n<=20 else "🟡"
-        rows.append(f"{emoji} {uni} → {n} días")
-    for uni,d in OPENS.items():
-        n=days_until(d)
-        emoji="🟢" if n<=0 else "🟢"
-        rows.append(f"{emoji} {uni} → abre {n} días")
-    return "\n".join(rows)
+lines = []
+for uni, d in DEADLINES.items():
+    n = days_until(d)
+    if 0 < n <= 40:
+        emoji = "🔴" if n <= 7 else "🟠" if n <= 20 else "🟡"
+        lines.append(f"{emoji} {uni}: {n}d")
+for uni, d in OPENS.items():
+    n = days_until(d)
+    if 0 < n <= 40:
+        lines.append(f"🟢 {uni}: +{n}d")
 
-acciones_tesis = [
-    "📖 Lee 2 papers sobre tu tema y anota sus citas en APA 7.",
-    "✍️ Escribe 300 palabras del marco teórico o metodología.",
-    "🔍 Revisa tu índice y ajusta según feedback.",
-    "📝 Escribe la introducción de uno de tus capítulos.",
-    "📚 Busca 5 nuevas referencias académicas.",
-    "✅ Revisa y corrige lo que escribiste ayer.",
-    "💭 Reflexiona: ¿qué conclusión quiero para el lector?",
-]
-tesis = acciones_tesis[day_num % len(acciones_tesis)]
+accion = "\n".join(lines) if lines else "Revisa tus aplicaciones"
 
-clase=""
-if weekday==1: clase="\n⏰ CLASE HOY 7PM"
-elif weekday==5: clase="\n⏰ CLASE HOY 9AM"
+tesis = ["Lee 2 papers APA","Escribe 300 palabras","Revisa indice","Intro capitulo","5 referencias","Revisa ayer","Conclusiones"][day_num % 7]
 
-dia_str=f"{DIAS_ES[weekday]} {today.day} de {MESES_ES[today.month-1]}"
+clase = " | CLASE 7PM" if weekday == 1 else " | CLASE 9AM" if weekday == 5 else ""
+dia = f"{DIAS_ES[weekday]} {today.day} {MESES_ES[today.month-1]}"
 
-mensaje=f"""🌸 Buenos días, Aylin!
-{dia_str}
-
-{get_frase_principal()}
-
-{tesis}
-
-{get_accion()}
-
-{get_estado()}{clase}
-
-💪 Un paso a la vez. Tú puedes."""
-
-url=f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-data=urllib.parse.urlencode({"chat_id":CHAT_ID,"parse_mode":"HTML","text":mensaje}).encode()
-req=urllib.request.Request(url,data=data,method="POST")
+msg = f"Aylin!\n{dia}\n{frase}\nTESIS: {tesis}\nMAESTRIAS:\n{accion}{clase}\nTu puedes!"
 
 try:
-    with urllib.request.urlopen(req,timeout=15) as resp:
-        r=json.loads(resp.read())
-    print("✅ Enviado!" if r.get("ok") else f"❌ Error: {r.get('description')}")
-except Exception as e:
-    print(f"❌ Error: {e}")
-    raise SystemExit(1)
+    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "7135132127"']
+    subprocess.run(cmd, timeout=10, check=True)
+    print("OK iMessage")
+except:
+    print("FAIL")
