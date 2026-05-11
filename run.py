@@ -127,7 +127,7 @@ msg = f"""🌸✨ BUENOS DIAS, AYLIN! ✨🌸
 💕 Un paso a la vez. Tu puedes. 💕"""
 
 try:
-    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "TUINFO"']
+    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "939099850"']
     subprocess.run(cmd, timeout=10, check=True)
     print("✅ iMessage enviado!")
 except Exception as e:
