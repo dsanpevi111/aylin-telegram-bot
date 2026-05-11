@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-import subprocess
+import urllib.request
+import urllib.parse
+import json
 from datetime import date
-import sys
+
+BOT_TOKEN = "8743339704:AAE6JKI8hCRNRaFzxYbre_VSR20XlzObLjY"
+CHAT_ID = "7135132127"
 
 today = date.today()
 weekday = today.weekday()
@@ -89,9 +93,9 @@ for uni, d in DEADLINES.items():
 
 if urgent:
     if min_d <= 7:
-        frase += f"\n🚨 {urgent}: {min_d} DIAS 🚨"
+        frase += f"\n🚨 {urgent}: {min_d} DIAS"
     elif min_d <= 20:
-        frase += f"\n⚡ {urgent}: {min_d} dias ⚡"
+        frase += f"\n⚡ {urgent}: {min_d} dias"
 
 lines = []
 for uni, d in DEADLINES.items():
@@ -104,7 +108,7 @@ for uni, d in OPENS.items():
     if 0 < n <= 40:
         lines.append(f"🟢 {uni}: +{n}d")
 
-accion = "\n".join(lines) if lines else "Revisa tus aplicaciones 💫"
+accion = "\n".join(lines) if lines else "Revisa tus aplicaciones"
 
 tesis = ["📖 Lee 2 papers APA","✍️ Escribe 300 palabras","🔍 Revisa indice","📝 Intro capitulo","📚 5 referencias","✅ Revisa ayer","💭 Conclusiones"][day_num % 7]
 
@@ -126,10 +130,18 @@ msg = f"""🌸✨ BUENOS DIAS, AYLIN! ✨🌸
 
 💕 Un paso a la vez. Tu puedes. 💕"""
 
+url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+data = urllib.parse.urlencode({"chat_id": CHAT_ID, "parse_mode": "HTML", "text": msg}).encode()
+req = urllib.request.Request(url, data=data, method="POST")
+
 try:
-    cmd = ['osascript', '-e', f'tell application "Messages" to send "{msg}" to buddy "939099850"']
-    subprocess.run(cmd, timeout=10, check=True)
-    print("✅ iMessage enviado!")
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        r = json.loads(resp.read())
+    if r.get("ok"):
+        print("✅ Mensaje enviado!")
+    else:
+        print(f"❌ Error: {r.get('description')}")
+        exit(1)
 except Exception as e:
-    print(f"❌ Error: {e}")
-    print("⚠️ Asegura que 'TUINFO' sea tu numero/email iCloud valido")
+    print(f"❌ {e}")
+    exit(1)
