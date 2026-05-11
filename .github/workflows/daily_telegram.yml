@@ -18,4 +18,5 @@ jobs:
           python-version: '3.12'
 
       - name: Enviar mensaje a Telegram
-        run: python "bot de telegramas de Aylin/enviar_mensaje.py"
+      run: python run.py
+      
